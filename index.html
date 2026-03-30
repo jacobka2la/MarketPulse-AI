@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketPilot AI | Live Stock Research</title>
+  <meta name="description" content="A smooth AI-powered stock research website with live market movers, live ticker lookup, and market news." />
+  <meta name="theme-color" content="#0a0f1f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="#top" class="brand">
+          <span class="brand-mark">MP</span>
+          <span class="brand-text">MarketPilot AI</span>
+        </a>
+        <nav class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#scanner">Scanner</a>
+          <a href="#lookup">Lookup</a>
+          <a href="#news">News</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <a href="#lookup" class="nav-button">Search Ticker</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero section">
+        <div class="container hero-grid">
+          <div class="hero-copy reveal">
+            <p class="eyebrow">AI-POWERED STOCK RESEARCH</p>
+            <h1>Live market data, smoother flow, and stock research that actually feels clean.</h1>
+            <p class="hero-text">
+              MarketPilot AI pulls live stock data and fresh market headlines into one smooth experience. Check movers, search any ticker, and get fast takeaways without a messy dashboard.
+            </p>
+            <div class="hero-actions">
+              <a href="#scanner" class="button button-primary">Explore Live Scanner</a>
+              <a href="#lookup" class="button button-secondary">Search Any Ticker</a>
+            </div>
+            <div class="hero-stats">
+              <div>
+                <strong id="hero-market-status">Loading...</strong>
+                <span>Market status</span>
+              </div>
+              <div>
+                <strong id="hero-top-symbol">--</strong>
+                <span>Top mover</span>
+              </div>
+              <div>
+                <strong id="hero-top-move">--</strong>
+                <span>Change today</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-panel reveal reveal-delay-1">
+            <div class="glass-card panel-main floating">
+              <div class="panel-top">
+                <span class="panel-label">Today’s AI Outlook</span>
+                <span class="dot"></span>
+              </div>
+              <div class="signal-row">
+                <div>
+                  <p class="muted">Top Momentum</p>
+                  <h3 id="panel-symbol">NVDA</h3>
+                </div>
+                <div id="panel-bias" class="green-pill">Loading</div>
+              </div>
+              <p id="panel-summary" class="panel-summary">Loading live market read...</p>
+              <div class="mini-grid">
+                <div class="mini-card">
+                  <span>Price</span>
+                  <strong id="panel-price">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Move</span>
+                  <strong id="panel-change">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Signal</span>
+                  <strong id="panel-signal">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Watch</span>
+                  <strong id="panel-watch">Volume + News</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section features">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">BUILT TO FEEL CLEAN</p>
+            <h2>Not janky. Not cluttered. Just live and useful.</h2>
+            <p>Clean static frontend. Simple Vercel serverless functions. No framework mess. No dependency hell.</p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card reveal">
+              <h3>Live market movers</h3>
+              <p>Shows a real-time movers table using backend endpoints that pull fresh market data.</p>
+            </article>
+            <article class="feature-card reveal reveal-delay-1">
+              <h3>Search any ticker</h3>
+              <p>Type a symbol like NVDA, TSLA, AAPL, or AMD and get live price action plus a quick AI-style read.</p>
+            </article>
+            <article class="feature-card reveal reveal-delay-2">
+              <h3>Fresh market news</h3>
+              <p>Pulls current business headlines so the homepage actually feels alive instead of demo-fake.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="scanner" class="section scanner">
+        <div class="container scanner-grid">
+          <div class="scanner-copy reveal">
+            <p class="eyebrow">LIVE SCANNER</p>
+            <h2>Watch the names traders actually care about.</h2>
+            <p>The scanner below loads fresh quotes from the backend and ranks your watchlist by daily move. It is built to deploy clean on Vercel with your API keys stored server-side.</p>
+            <ul class="check-list">
+              <li>Live quote pull</li>
+              <li>Positive/negative signal tags</li>
+              <li>Simple AI-style read</li>
+              <li>Fast Vercel-friendly backend</li>
+            </ul>
+          </div>
+
+          <div class="table-card reveal reveal-delay-1">
+            <div class="table-head">
+              <span>Ticker</span>
+              <span>Price</span>
+              <span>Move</span>
+              <span>AI Read</span>
+            </div>
+            <div id="scanner-rows">
+              <div class="table-row">
+                <span>Loading...</span>
+                <span>--</span>
+                <span>--</span>
+                <span>Getting live data</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="lookup" class="section lookup">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">TICKER LOOKUP</p>
+            <h2>Search any stock fast.</h2>
+            <p>Type a ticker and get a live quote, daily change, and a clean AI-style summary.</p>
+          </div>
+
+          <div class="lookup-card reveal">
+            <div class="lookup-bar">
+              <input id="ticker-input" type="text" placeholder="Enter ticker (ex: NVDA)" maxlength="10" />
+              <button id="ticker-button" class="button button-primary button-fixed">Search</button>
+            </div>
+
+            <div id="ticker-error" class="error-message hidden"></div>
+
+            <div id="ticker-result" class="ticker-result hidden">
+              <div class="ticker-top">
+                <div>
+                  <p class="muted">Ticker</p>
+                  <h3 id="ticker-symbol">--</h3>
+                </div>
+                <div id="ticker-bias" class="green-pill">--</div>
+              </div>
+              <div class="ticker-grid">
+                <div class="mini-card">
+                  <span>Price</span>
+                  <strong id="ticker-price">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Change</span>
+                  <strong id="ticker-change">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Percent</span>
+                  <strong id="ticker-percent">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Previous Close</span>
+                  <strong id="ticker-prev-close">--</strong>
+                </div>
+              </div>
+              <p id="ticker-summary" class="panel-summary"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="news" class="section news">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">MARKET NEWS FLOW</p>
+            <h2>Fresh headlines without the ugly clutter.</h2>
+            <p>Latest business stories load from the backend so the site stays live and useful.</p>
+          </div>
+          <div id="news-grid" class="news-grid">
+            <article class="news-card reveal">
+              <span class="news-tag">Loading</span>
+              <h3>Getting latest headlines...</h3>
+              <p>This section updates after the page connects to the backend.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section split-showcase">
+        <div class="container split-grid">
+          <div class="glass-card reveal">
+            <p class="eyebrow left">WHY THIS VERSION WORKS</p>
+            <h2>Static frontend + serverless backend.</h2>
+            <p>Your frontend stays simple with plain HTML, CSS, and JS. The live data calls happen through Vercel serverless functions in the <code>api</code> folder, so your keys stay hidden.</p>
+          </div>
+          <div class="glass-card reveal reveal-delay-1">
+            <p class="eyebrow left">WHAT YOU ADD IN VERCEL</p>
+            <h2>Just environment variables.</h2>
+            <p>No package.json, no build command, no weird framework config. Upload the files, add your keys in Vercel settings, and redeploy.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="section faq">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">FAQ</p>
+            <h2>Quick shit you should know</h2>
+          </div>
+          <div class="faq-list">
+            <details class="faq-item reveal">
+              <summary>Do I need React, Vite, or npm?</summary>
+              <p>No. This setup is plain HTML, CSS, JS, and Vercel API routes.</p>
+            </details>
+            <details class="faq-item reveal reveal-delay-1">
+              <summary>Are the keys visible in the browser?</summary>
+              <p>No. The browser only calls your own <code>/api/...</code> routes. Put your real keys in Vercel environment variables only.</p>
+            </details>
+            <details class="faq-item reveal reveal-delay-2">
+              <summary>Will this work on a normal Vercel static deployment?</summary>
+              <p>Yes, as long as the files are in the repo root and the <code>api</code> folder is there too.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cta">
+        <div class="container reveal">
+          <div class="cta-card">
+            <p class="eyebrow">NEXT MOVE</p>
+            <h2>Upload these files, add your env vars, and redeploy. That’s it.</h2>
+            <a href="#lookup" class="button button-primary">Try a Ticker Search</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
