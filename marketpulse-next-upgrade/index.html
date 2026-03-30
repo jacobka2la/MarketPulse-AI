@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketPilot AI | Real Data. Real Signals.</title>
+  <meta name="description" content="Live stock research with real market data, ranked setups, paper trading actions, and clean AI-style analysis backed by rules." />
+  <meta name="theme-color" content="#0a0f1f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="#top" class="brand">
+          <span class="brand-mark">MP</span>
+          <span class="brand-text">MarketPilot AI</span>
+        </a>
+        <nav class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#scanner">Scanner</a>
+          <a href="#search">Search</a>
+          <a href="#trading">Trading</a>
+          <a href="#news">News</a>
+        </nav>
+        <a href="#search" class="nav-button">Search Ticker</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero section">
+        <div class="container hero-grid">
+          <div class="hero-copy reveal">
+            <p class="eyebrow">REAL-DATA STOCK RESEARCH</p>
+            <h1>Live market data, smoother flow, and signals with actual logic behind them.</h1>
+            <p class="hero-text">
+              This version ranks setups from live market data, gives rule-based buy and sell reads, lets you search any ticker, and can send paper trades to Alpaca from inside the site.
+            </p>
+            <div class="hero-actions">
+              <a href="#scanner" class="button button-primary">View Top Picks</a>
+              <a href="#trading" class="button button-secondary">Paper Trade</a>
+            </div>
+            <div class="hero-stats">
+              <div>
+                <strong id="stat-watchlist">12 Symbols</strong>
+                <span>ranked on every refresh</span>
+              </div>
+              <div>
+                <strong id="stat-account">Paper Ready</strong>
+                <span>Alpaca account connection</span>
+              </div>
+              <div>
+                <strong id="stat-market">Live Data</strong>
+                <span>price + rules + news</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-panel reveal reveal-delay-1">
+            <div class="glass-card panel-main floating">
+              <div class="panel-top">
+                <span class="panel-label">Today’s Best Setup</span>
+                <span class="dot"></span>
+              </div>
+              <div class="signal-row">
+                <div>
+                  <p class="muted">Top Momentum</p>
+                  <h3 id="hero-symbol">Loading</h3>
+                </div>
+                <div id="hero-bias" class="green-pill">Scanning</div>
+              </div>
+              <p id="hero-summary" class="panel-summary">Pulling live market data and computing the signal score now.</p>
+              <div class="mini-grid">
+                <div class="mini-card">
+                  <span>Signal Score</span>
+                  <strong id="hero-score">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Price</span>
+                  <strong id="hero-price">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Sell Trigger</span>
+                  <strong id="hero-sell">--</strong>
+                </div>
+                <div class="mini-card">
+                  <span>Why</span>
+                  <strong id="hero-why">--</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section features">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">WHAT THIS VERSION DOES</p>
+            <h2>Search any ticker, rank top setups, trade in paper, and keep the visuals hard.</h2>
+            <p>This build uses real data sources and explicit rules. No random made-up buy tags. Every signal shows what fired and where the invalidation sits.</p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card reveal">
+              <h3>Real ticker search</h3>
+              <p>Search any ticker and get live price, trend score, bull case, bear case, invalidation level, and recent market headlines.</p>
+            </article>
+            <article class="feature-card reveal reveal-delay-1">
+              <h3>Signal engine</h3>
+              <p>Signals are built from moving averages, RSI, breakout context, daily change, and news sentiment when available.</p>
+            </article>
+            <article class="feature-card reveal reveal-delay-2">
+              <h3>Paper trading panel</h3>
+              <p>Connected to Alpaca paper trading so you can test buys and sells without touching real money.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="scanner" class="section scanner">
+        <div class="container scanner-grid scanner-grid-wide">
+          <div class="scanner-copy reveal">
+            <p class="eyebrow">TOP PICKS SCANNER</p>
+            <h2>Ranked setups from a real watchlist, sorted by actual signal score.</h2>
+            <p>This scanner scores symbols from live market data. It is not a guarantee machine. It’s a disciplined read of trend, momentum, volume behavior, and risk levels.</p>
+            <ul class="check-list">
+              <li>Live quote-backed scoring</li>
+              <li>Buy / hold / avoid bias</li>
+              <li>Suggested sell trigger</li>
+              <li>Fast paper-trade buttons</li>
+            </ul>
+          </div>
+          <div class="table-card reveal reveal-delay-1 full-width-card">
+            <div class="table-head scanner-head">
+              <span>Ticker</span>
+              <span>Price</span>
+              <span>Change</span>
+              <span>Score</span>
+              <span>Bias</span>
+              <span>Sell Trigger</span>
+              <span>Action</span>
+            </div>
+            <div id="scanner-table"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="search" class="section search-section">
+        <div class="container split-grid search-grid">
+          <div class="glass-card search-card reveal">
+            <p class="eyebrow left">TICKER SEARCH</p>
+            <h2>Pull a live read on any symbol.</h2>
+            <form id="ticker-form" class="search-form">
+              <input id="ticker-input" type="text" placeholder="Type a ticker like NVDA or AAPL" maxlength="10" autocomplete="off" />
+              <button class="button button-primary" type="submit">Run Analysis</button>
+            </form>
+            <p class="form-note">This uses live data and rule-based logic, not vibes.</p>
+            <div id="ticker-status" class="status-box">Ready.</div>
+          </div>
+
+          <div class="glass-card ticker-card reveal reveal-delay-1">
+            <div class="ticker-top">
+              <div>
+                <p class="eyebrow left small-gap">CURRENT READ</p>
+                <h2 id="ticker-symbol">--</h2>
+              </div>
+              <div id="ticker-bias-badge" class="green-pill">Waiting</div>
+            </div>
+            <div class="ticker-metrics">
+              <div class="mini-card"><span>Price</span><strong id="ticker-price">--</strong></div>
+              <div class="mini-card"><span>Daily Move</span><strong id="ticker-change">--</strong></div>
+              <div class="mini-card"><span>Signal Score</span><strong id="ticker-score">--</strong></div>
+              <div class="mini-card"><span>Sell Trigger</span><strong id="ticker-stop">--</strong></div>
+            </div>
+            <div class="analysis-grid">
+              <div class="analysis-block">
+                <h3>Bull case</h3>
+                <p id="bull-case">Run a ticker to load the upside case.</p>
+              </div>
+              <div class="analysis-block">
+                <h3>Bear case</h3>
+                <p id="bear-case">Run a ticker to load the downside case.</p>
+              </div>
+              <div class="analysis-block wide">
+                <h3>Why the signal fired</h3>
+                <p id="signal-reasons">No symbol loaded yet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="trading" class="section trading-section">
+        <div class="container split-grid trading-grid">
+          <div class="glass-card reveal">
+            <p class="eyebrow left">ALPACA PAPER TRADING</p>
+            <h2>Place real paper trades from inside the site.</h2>
+            <div class="account-grid">
+              <div class="mini-card"><span>Buying Power</span><strong id="buying-power">--</strong></div>
+              <div class="mini-card"><span>Cash</span><strong id="cash-balance">--</strong></div>
+              <div class="mini-card"><span>Equity</span><strong id="equity-balance">--</strong></div>
+              <div class="mini-card"><span>Status</span><strong id="account-status">--</strong></div>
+            </div>
+            <form id="trade-form" class="trade-form">
+              <div class="trade-row">
+                <input id="trade-symbol" type="text" placeholder="Ticker" maxlength="10" />
+                <input id="trade-qty" type="number" step="0.0001" min="0.0001" placeholder="Qty" />
+              </div>
+              <div class="trade-row">
+                <select id="trade-side">
+                  <option value="buy">Buy</option>
+                  <option value="sell">Sell</option>
+                </select>
+                <select id="trade-type">
+                  <option value="market">Market</option>
+                  <option value="limit">Limit</option>
+                </select>
+                <input id="trade-limit" type="number" step="0.01" min="0" placeholder="Limit price (only for limit)" />
+              </div>
+              <button type="submit" class="button button-primary full-button">Send Paper Order</button>
+            </form>
+            <div id="trade-status" class="status-box">Paper trading panel ready.</div>
+          </div>
+
+          <div class="glass-card reveal reveal-delay-1">
+            <p class="eyebrow left">POSITIONS</p>
+            <h2>Track what’s open.</h2>
+            <div id="positions-list" class="positions-list">
+              <p class="muted">Loading open positions…</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="news" class="section news">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">MARKET NEWS FLOW</p>
+            <h2>Fresh headlines with readable summaries.</h2>
+            <p>General market headlines load for the broader tape. A searched ticker also gets its own recent headlines inside the analysis view.</p>
+          </div>
+          <div id="news-grid" class="news-grid"></div>
+        </div>
+      </section>
+
+      <section class="section faq">
+        <div class="container">
+          <div class="section-heading reveal">
+            <p class="eyebrow">KEEP IT REAL</p>
+            <h2>What the signal engine actually means</h2>
+          </div>
+          <div class="faq-list">
+            <details class="faq-item reveal" open>
+              <summary>Are these signals real?</summary>
+              <p>Yes, in the sense that they are computed from real market data and explicit rules. No, in the sense that no signal can guarantee profit. This is a decision tool, not a magic ATM.</p>
+            </details>
+            <details class="faq-item reveal reveal-delay-1">
+              <summary>Can I use this to place real-money trades?</summary>
+              <p>Not yet. This build is set up around Alpaca paper trading first, which is the safer move while you test the logic.</p>
+            </details>
+            <details class="faq-item reveal reveal-delay-2">
+              <summary>Will it scale for other users later?</summary>
+              <p>Yep. Once your private version feels right, the next step is moving the keys behind user auth instead of your single-account setup.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
