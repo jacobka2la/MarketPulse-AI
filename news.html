@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketPulse AI | News</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="news">
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand"><span class="brand-mark">MP</span><span class="brand-text">MarketPulse AI</span></a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="scanner.html">Scanner</a>
+        <a href="search.html">Search</a>
+        <a href="news.html" class="active">News</a>
+        <a href="trade.html">Trade</a>
+      </nav>
+      <a href="search.html" class="nav-button">Search a Stock</a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container">
+      <div class="section-heading reveal lefty">
+        <p class="eyebrow">MARKET NEWS</p>
+        <h2>Live stories, cleaner summaries.</h2>
+        <p>Recent market headlines are pulled from Alpha Vantage so the page stays readable and useful.</p>
+      </div>
+      <div class="cards-grid" data-news-results>
+        <div class="glass-card scanner-empty"><h3>Loading news...</h3><p>Pulling latest stories.</p></div>
+      </div>
+    </div>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketPulse AI | Home</title>
+  <meta name="description" content="Real-data stock research with live scanner, search, news, and paper trading." />
+  <meta name="theme-color" content="#08111f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="home">
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">MP</span>
+        <span class="brand-text">MarketPulse AI</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="scanner.html">Scanner</a>
+        <a href="search.html">Search</a>
+        <a href="news.html">News</a>
+        <a href="trade.html">Trade</a>
+      </nav>
+      <a href="search.html" class="nav-button">Search a Stock</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero section">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">REAL-DATA STOCK RESEARCH</p>
+          <h1>Cleaner pages, stronger reads, and actual reasons behind every call.</h1>
+          <p class="hero-text">This version is built around real market data, rule-based buy and bearish signals, longer explanations, live search suggestions, and cleaner separate pages so it feels like a real product instead of a demo.</p>
+          <div class="hero-actions">
+            <a href="scanner.html" class="button button-primary">Open Scanner</a>
+            <a href="search.html" class="button button-secondary">Search Tickers</a>
+          </div>
+        </div>
+        <div class="hero-panel reveal reveal-delay-1" data-home-card>
+          <div class="glass-card panel-main floating">
+            <div class="panel-top">
+              <span class="panel-label">Current Top Setup</span>
+              <span class="dot"></span>
+            </div>
+            <div class="signal-row">
+              <div>
+                <p class="muted">Highest score on scanner</p>
+                <h3 data-home-symbol>Loading</h3>
+              </div>
+              <div class="green-pill" data-home-signal>Scanning</div>
+            </div>
+            <p class="panel-summary" data-home-summary>Pulling the latest market read.</p>
+            <div class="mini-grid">
+              <div class="mini-card"><span>Score</span><strong data-home-score>--</strong></div>
+              <div class="mini-card"><span>Price</span><strong data-home-price>--</strong></div>
+              <div class="mini-card"><span>Sell Trigger</span><strong data-home-sell>--</strong></div>
+              <div class="mini-card"><span>Bias</span><strong data-home-bias>--</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container feature-grid">
+        <article class="feature-card reveal">
+          <h3>Rule-based scanner</h3>
+          <p>No fake vibes. Signals come from real quotes and a rule-based score using momentum, gap, relative move, and price behavior.</p>
+        </article>
+        <article class="feature-card reveal reveal-delay-1">
+          <h3>Search suggestions live</h3>
+          <p>As you type, matching ticker ideas appear so you can move fast without guessing symbols from memory.</p>
+        </article>
+        <article class="feature-card reveal reveal-delay-2">
+          <h3>Longer reads</h3>
+          <p>Each stock gets a descriptive breakdown with bull case, bear case, and risk instead of lazy one-line filler.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

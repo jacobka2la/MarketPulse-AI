@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketPulse AI | Scanner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="scanner">
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand"><span class="brand-mark">MP</span><span class="brand-text">MarketPulse AI</span></a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="scanner.html" class="active">Scanner</a>
+        <a href="search.html">Search</a>
+        <a href="news.html">News</a>
+        <a href="trade.html">Trade</a>
+      </nav>
+      <a href="search.html" class="nav-button">Search a Stock</a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container">
+      <div class="section-heading reveal lefty">
+        <p class="eyebrow">LIVE SCANNER</p>
+        <h2>Ranked setups with real reasons.</h2>
+        <p>These are rule-based reads using live market data. A “Buy” signal means the current setup matches the scoring system. It does not mean guaranteed profit.</p>
+      </div>
+      <div class="cards-grid" data-scanner-results>
+        <div class="glass-card scanner-empty"><h3>Loading scanner...</h3><p>Checking watchlist data now.</p></div>
+      </div>
+    </div>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketPulse AI | Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="search">
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand"><span class="brand-mark">MP</span><span class="brand-text">MarketPulse AI</span></a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="scanner.html">Scanner</a>
+        <a href="search.html" class="active">Search</a>
+        <a href="news.html">News</a>
+        <a href="trade.html">Trade</a>
+      </nav>
+      <a href="search.html" class="nav-button">Search a Stock</a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container">
+      <div class="section-heading reveal lefty">
+        <p class="eyebrow">SEARCH</p>
+        <h2>Type a ticker or company name.</h2>
+        <p>Suggestions appear while you type. Pick one or submit your own symbol to get a full descriptive read.</p>
+      </div>
+      <form class="search-form reveal" data-search-form>
+        <input type="text" placeholder="Try NVDA, Apple, TSLA..." autocomplete="off" data-stock-input />
+        <button class="button button-primary" type="submit">Analyze</button>
+        <div class="suggestions" data-search-suggestions></div>
+      </form>
+      <div class="cards-grid single" data-search-result></div>
+    </div>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

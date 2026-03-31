@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketPulse AI | Trade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="trade">
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="index.html" class="brand"><span class="brand-mark">MP</span><span class="brand-text">MarketPulse AI</span></a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="scanner.html">Scanner</a>
+        <a href="search.html">Search</a>
+        <a href="news.html">News</a>
+        <a href="trade.html" class="active">Trade</a>
+      </nav>
+      <a href="search.html" class="nav-button">Search a Stock</a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container trade-grid" data-trade-page>
+      <div class="glass-card reveal">
+        <h2>Paper account</h2>
+        <div class="mini-grid singlecol">
+          <div class="mini-card"><span>Status</span><strong data-account-status>Loading</strong></div>
+          <div class="mini-card"><span>Equity</span><strong data-account-equity>--</strong></div>
+          <div class="mini-card"><span>Cash</span><strong data-account-cash>--</strong></div>
+          <div class="mini-card"><span>Buying Power</span><strong data-account-buying-power>--</strong></div>
+        </div>
+      </div>
+      <div class="glass-card reveal reveal-delay-1">
+        <h2>Place paper trade</h2>
+        <form class="trade-form" data-trade-form>
+          <input name="symbol" placeholder="Ticker" />
+          <input name="qty" type="number" min="1" step="1" placeholder="Quantity" />
+          <select name="side">
+            <option value="buy">Buy</option>
+            <option value="sell">Sell</option>
+          </select>
+          <button class="button button-primary" type="submit">Submit</button>
+        </form>
+        <p class="muted" data-trade-message>If Alpaca credentials are connected, this sends a paper trade only.</p>
+      </div>
+    </div>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
