@@ -1,244 +1,489 @@
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.18 });
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  },
+  { threshold: 0.18 }
+);
 
-document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
-const page = document.body.dataset.page;
-const fmtMoney = (value) => Number.isFinite(Number(value)) ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value)) : '--';
-const fmtPct = (value) => Number.isFinite(Number(value)) ? `${Number(value) > 0 ? '+' : ''}${Number(value).toFixed(2)}%` : '--';
-const badgeClass = (bias) => !bias ? 'warn-pill' : bias.toLowerCase().includes('bullish buy') ? 'green-pill' : bias.toLowerCase().includes('bearish') ? 'red-pill' : 'warn-pill';
+function formatPrice(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "--";
+  return `$${Number(value).toFixed(2)}`;
+}
 
-function setText(id, value) {
-  const el = document.getElementById(id);
+function formatPercent(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "--";
+  const num = Number(value);
+  return `${num >= 0 ? "+" : ""}${num.toFixed(2)}%`;
+}
+
+function setText(selector, value) {
+  const el = document.querySelector(selector);
   if (el) el.textContent = value;
 }
 
-function setHtml(id, value) {
-  const el = document.getElementById(id);
+function setHTML(selector, value) {
+  const el = document.querySelector(selector);
   if (el) el.innerHTML = value;
 }
 
-function setBadge(id, text) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = badgeClass(text);
-  el.textContent = text;
+function safeArray(value) {
+  return Array.isArray(value) ? value : [];
 }
 
-async function fetchJson(url, options = {}) {
-  const res = await fetch(url, options);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `Request failed: ${res.status}`);
+function debounce(fn, delay = 250) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+async function fetchJSON(url) {
+  const res = await fetch(url);
+  let data = null;
+
+  try {
+    data = await res.json();
+  } catch (err) {
+    data = null;
+  }
+
+  if (!res.ok) {
+    const message =
+      data?.error ||
+      data?.message ||
+      `Request failed: ${res.status}`;
+    throw new Error(message);
+  }
+
   return data;
 }
 
-function renderReasons(tags = []) {
-  return tags.map((tag) => `<span class="small-pill">${tag}</span>`).join('');
+/* ---------------- HOME PAGE ---------------- */
+
+async function loadHomeHeroCard() {
+  const heroCard = document.querySelector("[data-home-scanner]");
+  if (!heroCard) return;
+
+  try {
+    const data = await fetchJSON("/api/scanner");
+
+    setText("[data-home-symbol]", data.symbol || "AAPL");
+    setText("[data-home-status]", data.signal || "Neutral");
+    setText("[data-home-score]", data.score ?? "--");
+    setText("[data-home-price]", formatPrice(data.price));
+    setText("[data-home-sell-trigger]", data.sellTrigger || "--");
+    setText(
+      "[data-home-reason]",
+      data.summary ||
+        data.reason ||
+        "A live market setup was found based on current price action, volume behavior, momentum, and broader trend conditions."
+    );
+  } catch (err) {
+    console.error("Home scanner load failed:", err);
+
+    setText("[data-home-symbol]", "AAPL");
+    setText("[data-home-status]", "Neutral");
+    setText("[data-home-score]", "Fallback");
+    setText("[data-home-price]", "--");
+    setText("[data-home-sell-trigger]", "--");
+    setText(
+      "[data-home-reason]",
+      "Live scanner data is temporarily unavailable. The site is still running, but the scanner feed did not return a usable response right now."
+    );
+  }
 }
 
-function renderScannerCard(pick) {
-  return `
-    <article class="scanner-card reveal visible">
-      <div class="scanner-card-top">
+/* ---------------- SCANNER PAGE ---------------- */
+
+function renderScannerCards(stocks) {
+  const container = document.querySelector("[data-scanner-results]");
+  if (!container) return;
+
+  if (!stocks.length) {
+    container.innerHTML = `
+      <div class="glass-card scanner-empty">
+        <h3>No setups right now</h3>
+        <p>The scanner is live, but nothing currently meets the threshold for a strong setup.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = stocks
+    .map((stock) => {
+      const signal = stock.signal || "Neutral";
+      const badgeClass =
+        signal.toLowerCase().includes("buy")
+          ? "up"
+          : signal.toLowerCase().includes("bear")
+          ? "down"
+          : "";
+
+      return `
+        <article class="glass-card stock-card">
+          <div class="stock-card-top">
+            <div>
+              <p class="muted">Ticker</p>
+              <h3>${stock.symbol || "--"}</h3>
+            </div>
+            <div class="green-pill ${badgeClass}">${signal}</div>
+          </div>
+
+          <div class="stock-meta-grid">
+            <div class="mini-card">
+              <span>Price</span>
+              <strong>${formatPrice(stock.price)}</strong>
+            </div>
+            <div class="mini-card">
+              <span>Change</span>
+              <strong>${formatPercent(stock.changePercent)}</strong>
+            </div>
+            <div class="mini-card">
+              <span>Score</span>
+              <strong>${stock.score ?? "--"}</strong>
+            </div>
+            <div class="mini-card">
+              <span>Sell Trigger</span>
+              <strong>${stock.sellTrigger || "--"}</strong>
+            </div>
+          </div>
+
+          <div class="stock-writeup">
+            <h4>Why it looks this way</h4>
+            <p>${stock.summary || "No descriptive summary returned."}</p>
+
+            ${
+              stock.bullCase
+                ? `<h4>Bull case</h4><p>${stock.bullCase}</p>`
+                : ""
+            }
+
+            ${
+              stock.bearCase
+                ? `<h4>Bear case</h4><p>${stock.bearCase}</p>`
+                : ""
+            }
+
+            ${
+              stock.risk
+                ? `<h4>Risk</h4><p>${stock.risk}</p>`
+                : ""
+            }
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+async function loadScannerPage() {
+  const container = document.querySelector("[data-scanner-results]");
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="glass-card scanner-empty">
+      <h3>Loading scanner...</h3>
+      <p>Pulling real market data and ranking current setups.</p>
+    </div>
+  `;
+
+  try {
+    const data = await fetchJSON("/api/scanner");
+    const stocks = safeArray(data.stocks || data.results || data);
+
+    renderScannerCards(stocks);
+  } catch (err) {
+    console.error("Scanner page failed:", err);
+    container.innerHTML = `
+      <div class="glass-card scanner-empty">
+        <h3>Scanner unavailable</h3>
+        <p>${err.message}</p>
+      </div>
+    `;
+  }
+}
+
+/* ---------------- SEARCH PAGE ---------------- */
+
+function renderSuggestions(items) {
+  const list = document.querySelector("[data-search-suggestions]");
+  if (!list) return;
+
+  if (!items.length) {
+    list.innerHTML = "";
+    list.style.display = "none";
+    return;
+  }
+
+  list.innerHTML = items
+    .map(
+      (item) => `
+        <button type="button" class="suggestion-item" data-symbol="${item.symbol}">
+          <strong>${item.symbol}</strong>
+          <span>${item.name || ""}</span>
+        </button>
+      `
+    )
+    .join("");
+
+  list.style.display = "block";
+}
+
+function renderSearchResult(data) {
+  const container = document.querySelector("[data-search-result]");
+  if (!container) return;
+
+  container.innerHTML = `
+    <article class="glass-card stock-card">
+      <div class="stock-card-top">
         <div>
-          <p class="eyebrow left small-gap">${pick.name}</p>
-          <h3>${pick.symbol}</h3>
+          <p class="muted">Ticker Search</p>
+          <h3>${data.symbol || "--"}</h3>
         </div>
-        <div class="${badgeClass(pick.bias)}">${pick.bias}</div>
+        <div class="green-pill">${data.signal || "Neutral"}</div>
       </div>
-      <div class="scanner-meta">
-        <div class="meta-box"><span>Price</span><strong>${fmtMoney(pick.price)}</strong></div>
-        <div class="meta-box"><span>Daily Move</span><strong class="${pick.changePercent > 0 ? 'up' : pick.changePercent < 0 ? 'down' : 'neutral'}">${fmtPct(pick.changePercent)}</strong></div>
-        <div class="meta-box"><span>Score</span><strong>${pick.score}/100</strong></div>
-        <div class="meta-box"><span>Sell Trigger</span><strong>${fmtMoney(pick.sellTrigger)}</strong></div>
+
+      <div class="stock-meta-grid">
+        <div class="mini-card">
+          <span>Price</span>
+          <strong>${formatPrice(data.price)}</strong>
+        </div>
+        <div class="mini-card">
+          <span>Change</span>
+          <strong>${formatPercent(data.changePercent)}</strong>
+        </div>
+        <div class="mini-card">
+          <span>Sell Trigger</span>
+          <strong>${data.sellTrigger || "--"}</strong>
+        </div>
+        <div class="mini-card">
+          <span>Bias</span>
+          <strong>${data.bias || data.signal || "--"}</strong>
+        </div>
       </div>
-      <p>${pick.summary}</p>
-      <div class="analysis-grid blocks-2 mt-20">
-        <div class="analysis-block"><h3>Bull case</h3><p>${pick.bullCase}</p></div>
-        <div class="analysis-block"><h3>Bear case</h3><p>${pick.bearCase}</p></div>
-        <div class="analysis-block wide"><h3>Trading plan</h3><p>${pick.tradingPlan}</p></div>
+
+      <div class="stock-writeup">
+        <h4>Full read</h4>
+        <p>${data.summary || "No summary returned."}</p>
+
+        ${data.bullCase ? `<h4>Bull case</h4><p>${data.bullCase}</p>` : ""}
+        ${data.bearCase ? `<h4>Bear case</h4><p>${data.bearCase}</p>` : ""}
+        ${data.risk ? `<h4>Risk</h4><p>${data.risk}</p>` : ""}
       </div>
-      <div class="reason-list">${renderReasons(pick.reasonTags)}</div>
     </article>
   `;
 }
 
-async function loadHome() {
-  const data = await fetchJson('/api/scanner');
-  const top = (data.picks || [])[0];
-  if (!top) return;
-  setText('hero-symbol', top.symbol);
-  setBadge('hero-bias', top.bias);
-  setText('hero-summary', top.summary);
-  setText('hero-score', `${top.score}/100`);
-  setText('hero-price', fmtMoney(top.price));
-  setText('hero-sell', fmtMoney(top.sellTrigger));
-  setText('hero-why', top.reasonTags.slice(0, 2).join(' • '));
-}
+async function runTickerSearch(symbol) {
+  const container = document.querySelector("[data-search-result]");
+  const input = document.querySelector("[data-stock-input]");
+  const suggestions = document.querySelector("[data-search-suggestions]");
 
-async function loadScanner() {
-  const holder = document.getElementById('scanner-cards');
-  if (!holder) return;
-  holder.innerHTML = '<div class="status-box">Loading scanner...</div>';
-  const data = await fetchJson('/api/scanner');
-  holder.innerHTML = (data.picks || []).map(renderScannerCard).join('');
-}
+  if (!symbol) return;
 
-async function loadNews() {
-  const grid = document.getElementById('news-grid');
-  if (!grid) return;
-  grid.innerHTML = '<div class="status-box">Loading news...</div>';
-  const data = await fetchJson('/api/news');
-  grid.innerHTML = (data.items || []).map((item) => `
-    <article class="news-card reveal visible">
-      <span class="news-tag">${item.source || 'Market'}</span>
-      <h3>${item.title}</h3>
-      <p>${item.summary || 'No summary available.'}</p>
-      ${item.url ? `<a class="inline-link" href="${item.url}" target="_blank" rel="noopener noreferrer">Open story</a>` : ''}
-    </article>
-  `).join('');
-}
+  if (input) input.value = symbol.toUpperCase();
+  if (suggestions) {
+    suggestions.innerHTML = "";
+    suggestions.style.display = "none";
+  }
 
-async function runTicker(symbol) {
-  setText('ticker-status', `Loading ${symbol}...`);
-  const data = await fetchJson(`/api/ticker?symbol=${encodeURIComponent(symbol)}`);
-  setText('ticker-symbol', data.symbol);
-  setText('ticker-name', data.name || data.symbol);
-  setBadge('ticker-bias-badge', data.bias);
-  setText('ticker-price', fmtMoney(data.price));
-  setText('ticker-change', fmtPct(data.changePercent));
-  setText('ticker-score', `${data.score}/100`);
-  setText('ticker-stop', fmtMoney(data.sellTrigger));
-  setText('full-summary', data.summary);
-  setText('bull-case', data.bullCase);
-  setText('bear-case', data.bearCase);
-  setText('trading-plan', data.tradingPlan);
-  setText('ticker-status', `${data.symbol} loaded.`);
-  const newsHolder = document.getElementById('ticker-news');
-  if (newsHolder) {
-    newsHolder.innerHTML = (data.news || []).length ? data.news.map((item) => `
-      <div class="news-item">
-        <strong>${item.title}</strong>
-        <p>${item.summary || 'No summary available.'}</p>
-        ${item.url ? `<a class="inline-link" href="${item.url}" target="_blank" rel="noopener noreferrer">Open story</a>` : ''}
+  if (container) {
+    container.innerHTML = `
+      <div class="glass-card scanner-empty">
+        <h3>Loading ${symbol.toUpperCase()}...</h3>
+        <p>Pulling price action, trend, and signal details.</p>
       </div>
-    `).join('') : '<div class="news-item"><p>No recent headlines came back for this symbol.</p></div>';
+    `;
+  }
+
+  try {
+    const data = await fetchJSON(`/api/ticker?symbol=${encodeURIComponent(symbol)}`);
+    renderSearchResult(data);
+  } catch (err) {
+    console.error("Ticker search failed:", err);
+    if (container) {
+      container.innerHTML = `
+        <div class="glass-card scanner-empty">
+          <h3>Search failed</h3>
+          <p>${err.message}</p>
+        </div>
+      `;
+    }
   }
 }
 
-let suggestTimer;
-async function loadSuggestions(query) {
-  const holder = document.getElementById('suggestions');
-  if (!holder) return;
-  if (!query.trim()) {
-    holder.innerHTML = '';
+async function fetchSuggestions(query) {
+  if (!query || query.trim().length < 1) {
+    renderSuggestions([]);
     return;
   }
-  const data = await fetchJson(`/api/search?q=${encodeURIComponent(query)}`);
-  const results = data.results || [];
-  holder.innerHTML = results.map((item) => `
-    <div class="suggestion-item" data-symbol="${item.symbol}">
-      <strong>${item.symbol}</strong>
-      <span class="muted">${item.name}</span>
-    </div>
-  `).join('');
-  holder.querySelectorAll('.suggestion-item').forEach((item) => {
-    item.addEventListener('click', () => {
-      document.getElementById('ticker-input').value = item.dataset.symbol;
-      holder.innerHTML = '';
-      runTicker(item.dataset.symbol);
-    });
-  });
+
+  try {
+    const data = await fetchJSON(`/api/search?q=${encodeURIComponent(query.trim())}`);
+    renderSuggestions(safeArray(data.results || data));
+  } catch (err) {
+    console.error("Suggestion fetch failed:", err);
+    renderSuggestions([]);
+  }
 }
 
 function initSearchPage() {
-  const form = document.getElementById('ticker-form');
-  const input = document.getElementById('ticker-input');
-  if (!form || !input) return;
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const symbol = input.value.trim().toUpperCase();
-    if (symbol) runTicker(symbol);
+  const input = document.querySelector("[data-stock-input]");
+  const form = document.querySelector("[data-search-form]");
+  const list = document.querySelector("[data-search-suggestions]");
+
+  if (!input || !form) return;
+
+  const debouncedSuggest = debounce((value) => {
+    fetchSuggestions(value);
+  }, 200);
+
+  input.addEventListener("input", (e) => {
+    debouncedSuggest(e.target.value);
   });
-  input.addEventListener('input', () => {
-    clearTimeout(suggestTimer);
-    const value = input.value.trim();
-    suggestTimer = setTimeout(() => loadSuggestions(value), 180);
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    runTickerSearch(input.value.trim());
   });
-  runTicker('NVDA');
+
+  if (list) {
+    list.addEventListener("click", (e) => {
+      const button = e.target.closest("[data-symbol]");
+      if (!button) return;
+      runTickerSearch(button.dataset.symbol);
+    });
+  }
+}
+
+/* ---------------- NEWS PAGE ---------------- */
+
+function renderNews(items) {
+  const container = document.querySelector("[data-news-results]");
+  if (!container) return;
+
+  if (!items.length) {
+    container.innerHTML = `
+      <div class="glass-card scanner-empty">
+        <h3>No news found</h3>
+        <p>The news endpoint returned no stories right now.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = items
+    .map(
+      (item) => `
+        <article class="news-card">
+          <span class="news-tag">${item.source || "Market"}</span>
+          <h3>${item.title || "Untitled story"}</h3>
+          <p>${item.summary || item.description || "No summary available."}</p>
+          ${
+            item.url
+              ? `<a class="button button-secondary" href="${item.url}" target="_blank" rel="noopener noreferrer">Open Story</a>`
+              : ""
+          }
+        </article>
+      `
+    )
+    .join("");
+}
+
+async function loadNewsPage() {
+  const container = document.querySelector("[data-news-results]");
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="glass-card scanner-empty">
+      <h3>Loading market news...</h3>
+      <p>Pulling the latest headlines and summaries.</p>
+    </div>
+  `;
+
+  try {
+    const data = await fetchJSON("/api/news");
+    renderNews(safeArray(data.news || data.results || data));
+  } catch (err) {
+    console.error("News load failed:", err);
+    container.innerHTML = `
+      <div class="glass-card scanner-empty">
+        <h3>News unavailable</h3>
+        <p>${err.message}</p>
+      </div>
+    `;
+  }
+}
+
+/* ---------------- TRADE PAGE ---------------- */
+
+function renderAccount(data) {
+  setText("[data-account-equity]", formatPrice(data.equity));
+  setText("[data-account-cash]", formatPrice(data.cash));
+  setText("[data-account-buying-power]", formatPrice(data.buying_power));
+  setText("[data-account-status]", data.status || "--");
 }
 
 async function loadTradePage() {
-  const data = await fetchJson('/api/account');
-  const account = data.account || {};
-  const positions = data.positions || [];
-  setText('buying-power', fmtMoney(account.buying_power));
-  setText('cash-balance', fmtMoney(account.cash));
-  setText('equity-balance', fmtMoney(account.equity));
-  setText('account-status', account.status || '--');
-  const holder = document.getElementById('positions-list');
-  if (holder) {
-    holder.innerHTML = positions.length ? positions.map((position) => {
-      const pl = Number(position.unrealized_plpc || 0) * 100;
-      const cls = pl > 0 ? 'up' : pl < 0 ? 'down' : 'neutral';
-      return `
-        <div class="position-card">
-          <h3>${position.symbol}</h3>
-          <div class="position-meta">
-            <div><span>Qty</span><strong>${position.qty}</strong></div>
-            <div><span>Avg Entry</span><strong>${fmtMoney(position.avg_entry_price)}</strong></div>
-            <div><span>Market Value</span><strong>${fmtMoney(position.market_value)}</strong></div>
-            <div><span class="${cls}">Unrealized</span><strong class="${cls}">${fmtPct(pl)}</strong></div>
-          </div>
-        </div>
-      `;
-    }).join('') : '<div class="status-box">No open positions right now.</div>';
-  }
-}
+  const tradePanel = document.querySelector("[data-trade-page]");
+  if (!tradePanel) return;
 
-function initTradeForm() {
-  const form = document.getElementById('trade-form');
+  try {
+    const account = await fetchJSON("/api/account");
+    renderAccount(account);
+  } catch (err) {
+    console.error("Trade page account load failed:", err);
+    setText("[data-account-status]", "Unavailable");
+  }
+
+  const form = document.querySelector("[data-trade-form]");
+  const message = document.querySelector("[data-trade-message]");
+
   if (!form) return;
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const payload = {
-      symbol: document.getElementById('trade-symbol').value.trim().toUpperCase(),
-      qty: document.getElementById('trade-qty').value.trim(),
-      side: document.getElementById('trade-side').value,
-      type: document.getElementById('trade-type').value
-    };
-    if (payload.type === 'limit') payload.limit_price = document.getElementById('trade-limit').value.trim();
-    setText('trade-status', `Sending ${payload.side} order...`);
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const symbol = form.querySelector('[name="symbol"]')?.value?.trim()?.toUpperCase();
+    const qty = form.querySelector('[name="qty"]')?.value?.trim();
+    const side = form.querySelector('[name="side"]')?.value;
+
+    if (!symbol || !qty || !side) {
+      if (message) message.textContent = "Fill out symbol, quantity, and side.";
+      return;
+    }
+
+    if (message) message.textContent = "Sending paper trade...";
+
     try {
-      const result = await fetchJson('/api/order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const data = await fetchJSON("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ symbol, qty, side })
       });
-      setText('trade-status', `Order sent: ${result.side} ${result.qty} ${result.symbol}`);
-      loadTradePage();
-    } catch (error) {
-      setText('trade-status', error.message);
+      if (message) {
+        message.textContent = `Order submitted: ${data.symbol || symbol} ${data.side || side} x ${data.qty || qty}`;
+      }
+    } catch (err) {
+      console.error("Order failed:", err);
+      if (message) message.textContent = `Order failed: ${err.message}`;
     }
   });
 }
 
-(async function init() {
-  try {
-    if (page === 'home') await loadHome();
-    if (page === 'scanner') await loadScanner();
-    if (page === 'news') await loadNews();
-    if (page === 'search') initSearchPage();
-    if (page === 'trade') {
-      await loadTradePage();
-      initTradeForm();
-    }
-  } catch (error) {
-    console.error(error);
-    const status = document.querySelector('.status-box');
-    if (status) status.textContent = error.message;
-  }
-})();
+/* ---------------- INIT ---------------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadHomeHeroCard();
+  loadScannerPage();
+  initSearchPage();
+  loadNewsPage();
+  loadTradePage();
+});
